@@ -13,6 +13,7 @@ class BaseModel(Base):
 class User(BaseModel):
     __tablename__ = 'users'
 
-    password = Column(String)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
     is_active = Column(Boolean, default=False)
 
