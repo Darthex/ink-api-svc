@@ -11,3 +11,9 @@ class UserOut(BaseModel):
     email: str
     created_at: datetime
     is_active: bool
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserOut

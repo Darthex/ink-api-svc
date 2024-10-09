@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from starlette import status
 from repository.auth.auth import Auth
-from schema.auth.schema import UserIn
+from schema.auth.schema import UserIn, LoginResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -12,8 +12,8 @@ async def register(request: UserIn):
     return { 'User created' : response }
 
 
-@router.post("/login", status_code=status.HTTP_200_OK)
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=LoginResponse)
 async def login(request: UserIn):
     repo: Auth = Auth()
     response = repo.find_user(request)
-    return response
+    return { 'user': response, 'access_token': 'abcd_test_okay', 'token_type': 'Bearer' }
