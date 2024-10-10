@@ -15,3 +15,6 @@ class RepositoryMixin(object):
 
     def get_many(self, *args, **kwargs):
         return self.repo.get_many(*args, **kwargs)
+
+    def update_one(self, *args, **kwargs):
+        return self.repo.update_one(*args, **kwargs)

@@ -3,7 +3,7 @@ from starlette import status
 from models.models import User
 from repository.mixin import RepositoryMixin
 from repository.request_bound import RequestBound
-from schema.auth.schema import UserIn
+from schema.auth.schema import UserIn, UsernameUpdate
 
 
 class Auth(RepositoryMixin, RequestBound):
@@ -17,10 +17,19 @@ class Auth(RepositoryMixin, RequestBound):
         created_id = self.insert_one(query=user_details.model_dump(), model=User)
         return created_id
 
-    def find_user(self, user_details: UserIn, creating_user = False):
-        model, filters = User, 'email'
+    def find_user(self, user_details: UserIn, creating_user = False, default_filter = 'email'):
+        model, filters = User, default_filter
         user = self.get_one(query=user_details, model=model, filters=filters)
         print(not user and not creating_user)
         if not user and not creating_user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
         return user
+
+    def update_user(self, user: UsernameUpdate):
+        model = User
+        user_id = user.id
+        existing_user = self.find_user(user, default_filter = 'id')
+        if not existing_user:
+            raise HTTPException(status_code=status.HTTP_404_FORBIDDEN, detail='User not found')
+        response = self.update_one(model=model, record_id=user_id, update_values=user.model_dump())
+        return response

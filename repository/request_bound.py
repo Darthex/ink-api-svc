@@ -1,5 +1,5 @@
 from abc import ABC
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 from database.base import handleSession
 
 
@@ -33,6 +33,14 @@ class _BaseRepository(ABC):
         stmt = select(model).where(getattr(model, filters) == query)
         result = session.execute(stmt)
         return result.scalars().all()
+
+    @staticmethod
+    @handleSession
+    def update_one(session, record_id, update_values, model):
+        stmt = update(model).where(getattr(model, 'id') == record_id).values(update_values)
+        result = session.execute(stmt)
+        session.commit()
+        return True
 
 
 class RequestBound(_BaseRepository):
