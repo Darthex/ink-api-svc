@@ -1,7 +1,10 @@
-from fastapi import APIRouter
+from time import sleep
+from typing import Annotated
+from fastapi import APIRouter, Depends
 from starlette import status
 from repository.article.article import ArticleRepo
-from schema.article.article import ArticleIn, ArticleOut
+from schema.pagination import Pagination, pagination_params
+from schema.article.article import ArticleIn, ArticleOut, HeadedArticleOut
 from uuid import UUID
 
 router = APIRouter(prefix="/article", tags=["article"])
@@ -16,4 +19,10 @@ async def publish(article: ArticleIn):
 async def get_article(article_id: UUID):
     repo: ArticleRepo = ArticleRepo()
     response = repo.fetch_article(article_id)
+    return response
+
+@router.get('/', response_model=HeadedArticleOut)
+async def get_articles(pagination: Annotated[Pagination, Depends(pagination_params)]):
+    repo: ArticleRepo = ArticleRepo()
+    response = repo.fetch_many_articles(pagination)
     return response

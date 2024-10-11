@@ -16,5 +16,8 @@ class RepositoryMixin(object):
     def get_many(self, *args, **kwargs):
         return self.repo.get_many(*args, **kwargs)
 
+    def get_many_paginated(self, *args, **kwargs):
+        return self.repo.get_many_paginated(*args, **kwargs)
+
     def update_one(self, *args, **kwargs):
         return self.repo.update_one(*args, **kwargs)

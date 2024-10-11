@@ -15,7 +15,7 @@ async def register(request: UserInExtended):
 async def login(request: UserIn):
     repo: Auth = Auth()
     response = repo.find_user(request)
-    return { 'user': response, 'access_token': 'abcd_test_okay', 'token_type': 'Bearer' }
+    return { 'user': response, 'access_token': 'abcd_test_okay', 'token_type': 'bearer' }
 
 @router.post('/update', status_code=status.HTTP_200_OK)
 async def update(request: UsernameUpdate):

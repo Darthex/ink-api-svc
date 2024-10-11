@@ -23,3 +23,5 @@ class Article(BaseModel):
     owner_name = Column(String, nullable=False, index=True)
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
+    description = Column(String)
+    cover = Column(String)

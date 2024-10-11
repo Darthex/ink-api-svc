@@ -21,3 +21,10 @@ class ArticleRepo(RepositoryMixin, RequestBound):
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Article not found')
         return result
+
+    def fetch_many_articles(self, pagination_params):
+        model = Article
+        search_attributes = ['owner_name', 'title']
+        count, result = (
+            self.get_many_paginated(model=model, pagination_params=pagination_params, search_attributes=search_attributes))
+        return {"count": count, "result": result}
