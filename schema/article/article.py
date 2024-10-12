@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from datetime import datetime
 from uuid import UUID
 
+from schema.tags import TagsEnum
+
 class ArticleBase(BaseModel):
     title: str
     content: str
@@ -10,6 +12,7 @@ class ArticleBase(BaseModel):
     owner_name: str
     description: Optional[str]
     cover: Optional[str]
+    tags: Optional[List[TagsEnum]] = []
 
 class ArticleIn(ArticleBase):
     pass
@@ -18,6 +21,14 @@ class ArticleOut(ArticleBase):
     id: UUID
     created_at: datetime
 
+class ArticlesOut(BaseModel):
+    title: str
+    owner_id: UUID
+    owner_name: str
+    description: Optional[str]
+    cover: Optional[str]
+    tags: Optional[List[TagsEnum]]
+
 class HeadedArticleOut(BaseModel):
     count: int
-    result: List[ArticleOut]
+    result: List[ArticlesOut]

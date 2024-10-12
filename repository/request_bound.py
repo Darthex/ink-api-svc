@@ -1,5 +1,5 @@
 from abc import ABC
-from sqlalchemy import insert, select, delete, update, desc, asc, func, or_
+from sqlalchemy import insert, select, update, desc, asc, func, or_
 from database.base import handleSession
 from schema.pagination import SortEnum
 
@@ -36,9 +36,14 @@ class _BaseRepository(ABC):
 
     @staticmethod
     @handleSession
-    def get_many_paginated(session, model, pagination_params, search_attributes):
+    def get_many_paginated(session, model, pagination_params, search_attributes, array_filter: list[str] = None, filter_column = ''):
+        select_stmt = select(model)
+        if array_filter:
+            select_stmt = select_stmt.filter(
+                or_(*(getattr(model, filter_column).any(tag) for tag in array_filter))
+            )
         order = desc if pagination_params.sort == SortEnum.DESC else asc
-        stmt = (select(model)
+        stmt = (select_stmt
                 .limit(pagination_params.take)
                 .offset(pagination_params.skip)
                 .order_by(order(getattr(model, pagination_params.field))))
@@ -50,7 +55,13 @@ class _BaseRepository(ABC):
         if search_conditions:
             stmt = stmt.where(or_(*search_conditions))
         result = session.execute(stmt).scalars().all()
-        count_stmt = select(func.count()).select_from(select(getattr(model, 'id')).where(or_(*search_conditions)))
+        count_stmt = select(func.count()).select_from(model)
+        if array_filter:
+            count_stmt = count_stmt.where(
+                or_(*(getattr(model, filter_column).any(tag) for tag in array_filter))
+            )
+        if search_conditions:
+            count_stmt = count_stmt.where(or_(*search_conditions))
         count = session.execute(count_stmt).scalar_one()
         return count, result
 

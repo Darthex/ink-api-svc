@@ -1,5 +1,5 @@
 import uuid
-from sqlalchemy import Column, String, func, DateTime, Boolean
+from sqlalchemy import Column, String, func, DateTime, Boolean, ARRAY
 from sqlalchemy.dialects.postgresql import UUID
 from database.base import Base
 
@@ -15,6 +15,7 @@ class User(BaseModel):
     password = Column(String, nullable=False)
     is_active = Column(Boolean, default=False)
     username = Column(String, nullable=False)
+    tags = Column(ARRAY(String), default=[])
 
 class Article(BaseModel):
     __tablename__ = 'articles'
@@ -25,3 +26,4 @@ class Article(BaseModel):
     content = Column(String, nullable=False)
     description = Column(String)
     cover = Column(String)
+    tags = Column(ARRAY(String), default=[])
