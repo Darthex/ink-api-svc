@@ -22,6 +22,8 @@ class ArticleOut(ArticleBase):
     created_at: datetime
 
 class ArticlesOut(BaseModel):
+    id: UUID
+    created_at: datetime
     title: str
     owner_id: UUID
     owner_name: str
