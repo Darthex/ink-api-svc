@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
+from utils.tokens import verify_token
 from api.routes.api import router
 
 app = FastAPI()
@@ -11,13 +13,13 @@ app = FastAPI()
 all_allowed = ["*"]
 
 
-# @app.middleware('http')
-# async def authorize(request: Request, call_next):
-#     response = verify_token(request)
-#     if not response == '':
-#         print(response)
-#         return JSONResponse(content={'detail': response}, status_code=401)
-#     return await call_next(request)
+@app.middleware('http')
+async def authorize(request: Request, call_next):
+    response = verify_token(request)
+    if not response == '':
+        print(response)
+        return JSONResponse(content={'detail': response}, status_code=401)
+    return await call_next(request)
 
 
 app.add_middleware(
