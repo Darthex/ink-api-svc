@@ -1,3 +1,5 @@
+from http.client import responses
+
 from fastapi import HTTPException
 from starlette import status
 from models.models import Article
@@ -12,11 +14,19 @@ class ArticleRepo(RepositoryMixin, RequestBound):
         super().__init__(repo)
 
     def publish_article(self, article: ArticleIn):
-        tags = [tags.value for tags in article.tags]
+        tags = self.get_tags_from_enum(article.tags)
         article_dump = article.model_dump()
         article_dump['tags'] = tags
         created_id = self.insert_one(query=article_dump, model=Article)
         return created_id
+
+    def update_article(self, article_id: UUID, article: ArticleIn):
+        model = Article
+        tags = self.get_tags_from_enum(article.tags)
+        article_dump = article.model_dump()
+        article_dump['tags'] = tags
+        response = self.update_one(model=model, record_id=article_id, update_values=article_dump)
+        return response
 
     def fetch_article(self, article_id: UUID):
         model, filters = Article, 'id'

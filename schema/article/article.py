@@ -1,12 +1,12 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 from datetime import datetime
 from uuid import UUID
 
 from schema.tags import TagsEnum
 
 class ArticleBase(BaseModel):
-    title: str
+    title: constr(min_length=1)
     content: str
     owner_id: UUID
     owner_name: str

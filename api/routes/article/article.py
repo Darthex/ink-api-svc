@@ -21,6 +21,12 @@ async def get_article(article_id: UUID):
     response = repo.fetch_article(article_id)
     return response
 
+@router.put('/{article_id}', status_code=status.HTTP_200_OK)
+async def update_article(article_id: UUID, article: ArticleIn):
+    repo: ArticleRepo = ArticleRepo()
+    response = repo.update_article(article_id, article)
+    return response
+
 @router.get('/', response_model=HeadedArticleOut)
 async def get_articles(
         pagination: Annotated[Pagination, Depends(pagination_params)],
